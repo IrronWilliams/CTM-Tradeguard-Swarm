@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradeGuard — CTM Autonomous Accrual & Audit Swarm</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 rounded-md">TradeGuard AI Swarm</span>
+          <h1 class="text-xl font-bold text-white">National Convenience Retail — CTM Accrual & Audit Command Center</h1>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          Multi-Agent LangGraph Swarm (SQLite ERP Ledger Agent &leftrightarrow; ChromaDB Contract RAG Agent &rarr; COA Financial Auditor)
+        </p>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="px-3 py-1.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium">
+          SQLite: 26 Elements / 76 Qtr Rows
+        </span>
+        <span class="px-3 py-1.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium">
+          ChromaDB: 43 Contract Chunks
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-6 space-y-8">
+    <!-- Top Executive KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400">YTD Accrued Budget</p>
+        <p id="kpi-accrued" class="text-2xl font-bold text-white mt-1">$0.00</p>
+        <p class="text-xs text-slate-500 mt-1">Across 5 National Chains</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400">YTD Promotional Spend</p>
+        <p id="kpi-spend" class="text-2xl font-bold text-amber-300 mt-1">$0.00</p>
+        <p class="text-xs text-slate-500 mt-1">Settled Rebates & Invoices</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Remaining Accrual Balance</p>
+        <p id="kpi-remaining" class="text-2xl font-bold text-emerald-400 mt-1">$0.00</p>
+        <p class="text-xs text-slate-500 mt-1">Available for Q3/Q4 Claims</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Golden Dataset Accuracy</p>
+        <p id="kpi-accuracy" class="text-2xl font-bold text-indigo-400 mt-1">--</p>
+        <p class="text-xs text-slate-500 mt-1">Decision & COA Approver Match</p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400">Avg Swarm Audit Latency</p>
+        <p id="kpi-latency" class="text-2xl font-bold text-sky-400 mt-1">--</p>
+        <p class="text-xs text-slate-500 mt-1">3-Agent A2A Execution Time</p>
+      </div>
+    </section>
+
+    <!-- Customer Filter Bar -->
+    <section class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-xl p-4">
+      <div class="flex items-center gap-2 flex-wrap" id="customer-filters">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mr-2">Filter Customer:</span>
+        <button onclick="setCustomerFilter('ALL')" data-cust="ALL" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white">All Chains (26)</button>
+        <button onclick="setCustomerFilter('CUST-HESS-001')" data-cust="CUST-HESS-001" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Hess (4)</button>
+        <button onclick="setCustomerFilter('CUST-BP-002')" data-cust="CUST-BP-002" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">BP North America (4)</button>
+        <button onclick="setCustomerFilter('CUST-WAWA-003')" data-cust="CUST-WAWA-003" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Wawa (6 • UNSIGNED)</button>
+        <button onclick="setCustomerFilter('CUST-CIRCLEK-004')" data-cust="CUST-CIRCLEK-004" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Circle K (7)</button>
+        <button onclick="setCustomerFilter('CUST-7ELEVEN-005')" data-cust="CUST-7ELEVEN-005" class="cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">7-Eleven (5)</button>
+      </div>
+    </section>
+
+    <!-- Table B: Master Accrual Elements Ledger -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Table B: Customer Elements & Accrual Ledger (`accrual_elements_ledger`)</h2>
+          <p class="text-xs text-slate-400">Click "Q1–Q3 Schedule" on any element to inspect Table A quarterly case volumes, effective rates, and bottler review notes.</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-950/60 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <th class="py-3 px-4">Customer</th>
+              <th class="py-3 px-3">Status</th>
+              <th class="py-3 px-3">Element ID</th>
+              <th class="py-3 px-4">Element Name & Packages</th>
+              <th class="py-3 px-2 text-right">Base</th>
+              <th class="py-3 px-2 text-right">Q1</th>
+              <th class="py-3 px-2 text-right">Q2</th>
+              <th class="py-3 px-2 text-right">Q3</th>
+              <th class="py-3 px-2 text-right">Q4 Proj</th>
+              <th class="py-3 px-3 text-right">YTD Cases</th>
+              <th class="py-3 px-3 text-right">YTD Accrued</th>
+              <th class="py-3 px-3 text-right">YTD Spend</th>
+              <th class="py-3 px-3 text-right">Remaining Bal</th>
+              <th class="py-3 px-3 text-center">Table A</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-tbody" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Table A Modal / Drawer Drilldown -->
+    <section id="schedule-panel" class="hidden bg-slate-900 border-2 border-indigo-500/50 rounded-xl p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 id="schedule-title" class="text-sm font-bold text-indigo-300">Table A: Quarterly Accrual Schedule</h3>
+          <p class="text-xs text-slate-400">Tracks planned vs. actual shipped bottle/can cases, quarterly rate adjustments, and review notes.</p>
+        </div>
+        <button onclick="closeSchedulePanel()" class="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Close &times;</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+              <th class="py-2.5 px-3">Quarter</th>
+              <th class="py-2.5 px-3">Supporting Packages</th>
+              <th class="py-2.5 px-3 text-right">Planned Cases</th>
+              <th class="py-2.5 px-3 text-right">Actual ERP Cases</th>
+              <th class="py-2.5 px-3 text-right">Base Rate</th>
+              <th class="py-2.5 px-3 text-right">Effective Qtr Rate</th>
+              <th class="py-2.5 px-3 text-right">Qtr Accrued ($)</th>
+              <th class="py-2.5 px-4">Quarterly Review & Bottler Notes</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-tbody" class="divide-y divide-slate-800"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Live Swarm Inspector Panel -->
+    <section id="live-audit-panel" class="hidden bg-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Live LangGraph Multi-Agent Execution</span>
+          <h3 id="live-audit-title" class="text-base font-bold text-white mt-0.5">Auditing Claim...</h3>
+        </div>
+        <button onclick="document.getElementById('live-audit-panel').classList.add('hidden')" class="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Close &times;</button>
+      </div>
+      <div id="live-audit-body" class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs"></div>
+    </section>
+
+    <!-- 15-Claim Golden Dataset & Audit Rationale Table -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 class="text-base font-bold text-white">CTM Claims Audit Log & AI Swarm Rationale (15 Golden Dataset Claims)</h2>
+          <p class="text-xs text-slate-400">Click "Run Live Swarm" on any claim to execute the 3-Agent LangGraph workflow in real time.</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-950/60 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+              <th class="py-3 px-4">Claim ID</th>
+              <th class="py-3 px-3">Customer & Element</th>
+              <th class="py-3 px-3 text-right">Requested</th>
+              <th class="py-3 px-3 text-right">Verified Payout</th>
+              <th class="py-3 px-3">Swarm Decision</th>
+              <th class="py-3 px-3">Required COA Approver</th>
+              <th class="py-3 px-4">AI Accounting & Contract Rationale</th>
+              <th class="py-3 px-3 text-center">Live Action</th>
+            </tr>
+          </thead>
+          <tbody id="claims-tbody" class="divide-y divide-slate-800/70"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let allElements = [];
+    let allSchedules = [];
+    let allClaims = [];
+    let evalResultsMap = {};
+    let currentCustomerFilter = 'ALL';
+
+    const fmtCurrency = (val) => {
+      if (val === null || val === undefined) return '—';
+      const sign = val < 0 ? '-' : '';
+      return sign + '$' + Math.abs(Number(val)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
+    const fmtRate = (val) => (val === null || val === undefined) ? '—' : '$' + Number(val).toFixed(2);
+    const fmtInt = (val) => (val === null || val === undefined) ? '—' : Number(val).toLocaleString('en-US');
+
+    async function initDashboard() {
+      const [ledgerRes, evalRes] = await Promise.all([
+        fetch('/api/ledger').then(r => r.json()),
+        fetch('/api/eval-results').then(r => r.json())
+      ]);
+
+      allElements = ledgerRes.elements || [];
+      allSchedules = ledgerRes.schedules || [];
+      allClaims = evalRes.claims || [];
+
+      const evaluation = evalRes.evaluation || {};
+      (evaluation.results || []).forEach(r => {
+        evalResultsMap[r.claim_id] = r;
+      });
+
+      if (evaluation.total_claims) {
+        document.getElementById('kpi-accuracy').textContent = `${evaluation.exact_match_accuracy_pct}% (${evaluation.total_claims}/${evaluation.total_claims})`;
+        document.getElementById('kpi-latency').textContent = `${evaluation.average_latency_seconds}s`;
+      }
+
+      renderDashboard();
+    }
+
+    function setCustomerFilter(custId) {
+      currentCustomerFilter = custId;
+      document.querySelectorAll('.cust-btn').forEach(btn => {
+        if (btn.dataset.cust === custId) {
+          btn.className = 'cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white';
+        } else {
+          btn.className = 'cust-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700';
+        }
+      });
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      const filteredElements = currentCustomerFilter === 'ALL'
+        ? allElements
+        : allElements.filter(e => e.customer_id === currentCustomerFilter);
+
+      // Update KPI totals for current filter
+      const totalAccrued = filteredElements.reduce((acc, e) => acc + (e.ytd_accrued_budget || 0), 0);
+      const totalSpend = filteredElements.reduce((acc, e) => acc + (e.ytd_spend || 0), 0);
+      const totalRemaining = filteredElements.reduce((acc, e) => acc + (e.remaining_balance || 0), 0);
+
+      document.getElementById('kpi-accrued').textContent = fmtCurrency(totalAccrued);
+      document.getElementById('kpi-spend').textContent = fmtCurrency(totalSpend);
+      document.getElementById('kpi-remaining').textContent = fmtCurrency(totalRemaining);
+
+      // Render Table B
+      const ledgerTbody = document.getElementById('ledger-tbody');
+      ledgerTbody.innerHTML = filteredElements.map(el => {
+        const statusBadge = el.contract_status === 'SIGNED'
+          ? '<span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">SIGNED</span>'
+          : '<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-semibold">UNSIGNED</span>';
+
+        const remClass = el.remaining_balance < 0 ? 'text-rose-400 font-bold' : 'text-emerald-300 font-semibold';
+
+        return `
+          <tr class="hover:bg-slate-800/50 transition">
+            <td class="py-3 px-4 font-medium text-white">${el.customer_name}</td>
+            <td class="py-3 px-3">${statusBadge}</td>
+            <td class="py-3 px-3 font-mono text-indigo-300 font-semibold">${el.element_id}</td>
+            <td class="py-3 px-4">
+              <div class="font-semibold text-slate-100">${el.element_name}</div>
+              <div class="text-[11px] text-slate-400">${el.supporting_packages}</div>
+            </td>
+            <td class="py-3 px-2 text-right font-mono">${fmtRate(el.base_rate)}</td>
+            <td class="py-3 px-2 text-right font-mono text-slate-300">${fmtRate(el.q1_rate)}</td>
+            <td class="py-3 px-2 text-right font-mono text-slate-300">${fmtRate(el.q2_rate)}</td>
+            <td class="py-3 px-2 text-right font-mono text-slate-300">${fmtRate(el.q3_rate)}</td>
+            <td class="py-3 px-2 text-right font-mono text-slate-400">${fmtRate(el.q4_proj_rate)}</td>
+            <td class="py-3 px-3 text-right font-mono">${fmtInt(el.ytd_actual_cases)}</td>
+            <td class="py-3 px-3 text-right font-mono text-white">${fmtCurrency(el.ytd_accrued_budget)}</td>
+            <td class="py-3 px-3 text-right font-mono text-amber-300">${fmtCurrency(el.ytd_spend)}</td>
+            <td class="py-3 px-3 text-right font-mono ${remClass}">${fmtCurrency(el.remaining_balance)}</td>
+            <td class="py-3 px-3 text-center">
+              <button onclick="showSchedule('${el.element_id}', '${el.element_name.replace(/'/g, "\\'")}')"
+                class="px-2.5 py-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white text-[11px] font-medium transition">
+                Q1–Q3 Schedule
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Render Claims Table
+      const filteredClaims = currentCustomerFilter === 'ALL'
+        ? allClaims
+        : allClaims.filter(c => c.customer_id === currentCustomerFilter);
+
+      const claimsTbody = document.getElementById('claims-tbody');
+      claimsTbody.innerHTML = filteredClaims.map(c => {
+        const ev = evalResultsMap[c.claim_id] || {};
+        const decision = ev.actual_decision || c.expected_outcome;
+        const approver = ev.actual_approver || c.expected_approver.split('(')[0].trim();
+        const payout = ev.verified_payout_amount !== undefined ? ev.verified_payout_amount : (decision === 'REJECT' ? 0 : c.amount_requested);
+        const rationale = ev.rationale || c.description;
+
+        let decBadge = '';
+        if (decision === 'APPROVE') {
+          decBadge = '<span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">APPROVE</span>';
+        } else if (decision === 'ESCALATE') {
+          decBadge = '<span class="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">ESCALATE</span>';
+        } else {
+          decBadge = '<span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">REJECT</span>';
+        }
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition align-top">
+            <td class="py-3.5 px-4 font-mono font-bold text-white whitespace-nowrap">${c.claim_id}</td>
+            <td class="py-3.5 px-3">
+              <div class="font-semibold text-white">${c.customer_name}</div>
+              <div class="font-mono text-[11px] text-indigo-300">${c.element_id} • ${c.fiscal_quarter}</div>
+            </td>
+            <td class="py-3.5 px-3 text-right font-mono text-white whitespace-nowrap">${fmtCurrency(c.amount_requested)}</td>
+            <td class="py-3.5 px-3 text-right font-mono font-semibold ${payout > 0 ? 'text-emerald-300' : 'text-slate-500'} whitespace-nowrap">${fmtCurrency(payout)}</td>
+            <td class="py-3.5 px-3 whitespace-nowrap">${decBadge}</td>
+            <td class="py-3.5 px-3 font-medium text-slate-200 whitespace-nowrap">${approver}</td>
+            <td class="py-3.5 px-4 text-slate-300 leading-relaxed max-w-md">${rationale}</td>
+            <td class="py-3.5 px-3 text-center whitespace-nowrap">
+              <button onclick="runLiveAudit('${c.claim_id}')"
+                class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[11px] transition shadow">
+                &#9654; Run Live Swarm
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function showSchedule(elementId, elementName) {
+      const rows = allSchedules.filter(s => s.element_id === elementId);
+      document.getElementById('schedule-title').textContent = `Table A: Quarterly Schedule for ${elementId} (${elementName})`;
+      document.getElementById('schedule-tbody').innerHTML = rows.map(r => `
+        <tr>
+          <td class="py-2.5 px-3 font-mono font-semibold text-indigo-300">${r.quarter}</td>
+          <td class="py-2.5 px-3 text-slate-300">${r.supporting_packages}</td>
+          <td class="py-2.5 px-3 text-right font-mono">${fmtInt(r.planned_cases)}</td>
+          <td class="py-2.5 px-3 text-right font-mono font-semibold text-white">${fmtInt(r.actual_cases)}</td>
+          <td class="py-2.5 px-3 text-right font-mono">${fmtRate(r.contract_base_rate)}</td>
+          <td class="py-2.5 px-3 text-right font-mono font-semibold text-emerald-300">${fmtRate(r.quarterly_accrual_rate)}</td>
+          <td class="py-2.5 px-3 text-right font-mono font-semibold text-white">${fmtCurrency(r.quarterly_accrued_dollars)}</td>
+          <td class="py-2.5 px-4 text-slate-300">${r.review_notes}</td>
+        </tr>
+      `).join('');
+      const panel = document.getElementById('schedule-panel');
+      panel.classList.remove('hidden');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function closeSchedulePanel() {
+      document.getElementById('schedule-panel').classList.add('hidden');
+    }
+
+    async function runLiveAudit(claimId) {
+      const panel = document.getElementById('live-audit-panel');
+      const title = document.getElementById('live-audit-title');
+      const body = document.getElementById('live-audit-body');
+
+      panel.classList.remove('hidden');
+      title.textContent = `Running 3-Agent LangGraph Swarm on ${claimId}... (Querying SQLite & ChromaDB)`;
+      body.innerHTML = `<div class="col-span-3 py-6 text-center text-slate-400 animate-pulse">Executing Node 1 (SQLite ERP Agent) &rarr; Node 2 (ChromaDB Contract RAG Agent) &rarr; Node 3 (Financial Auditor & COA Supervisor)...</div>`;
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      const res = await fetch(`/api/audit/${claimId}`, { method: 'POST' });
+      const data = await res.json();
+      const d = data.audit_decision;
+
+      title.textContent = `Live Swarm Audit Complete: ${claimId} -> ${d.decision} (Approver: ${d.required_approver})`;
+      body.innerHTML = `
+        <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-2">
+          <div class="font-bold text-indigo-300 uppercase tracking-wider">1. Node 1: ERP & Accrual Agent (SQLite)</div>
+          <pre class="whitespace-pre-wrap text-slate-300 font-sans text-[11px] leading-relaxed">${data.erp_findings}</pre>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-2">
+          <div class="font-bold text-sky-300 uppercase tracking-wider">2. Node 2: Contract & Policy Agent (Chroma RAG)</div>
+          <pre class="whitespace-pre-wrap text-slate-300 font-sans text-[11px] leading-relaxed">${data.contract_findings}</pre>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-lg p-3.5 space-y-2">
+          <div class="font-bold text-emerald-300 uppercase tracking-wider">3. Node 3: 6-Point Checklist & COA Decision</div>
+          <div class="space-y-1 text-slate-200">
+            <div><strong>Decision:</strong> ${d.decision} (${data.human_approval_status})</div>
+            <div><strong>Required Approver:</strong> ${d.required_approver}</div>
+            <div><strong>Verified Payout:</strong> ${fmtCurrency(d.verified_payout_amount)}</div>
+            <div class="pt-1 text-[11px] text-slate-300">
+              Checklist: [1.Contract: ${d.item_1_valid_contract} | 2.Funds: ${d.item_2_sufficient_funds} | 3.Receipt: ${d.item_3_receipt_or_pop_attached} | 4.Eligible: ${d.item_4_expense_eligible} | 5.Math/Vol: ${d.item_5_math_and_volume_verified}]
+            </div>
+            <div class="pt-2 text-slate-300 border-t border-slate-800 mt-2">${d.rationale}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    initDashboard();
+  </script>
+</body>
+</html>
