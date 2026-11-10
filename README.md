@@ -2,6 +2,11 @@
 
 **An Enterprise Multi-Agent AI System for National Convenience Retail Customer Trade Marketing (CTM) Accounting, Contract RAG, and Chart of Authority Governance**
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ctm-tradeguard-swarm.streamlit.app/)
+
+> **Live Interactive Prototype:** **[TradeGuard — CTM Autonomous Swarm (Streamlit Cloud)](https://ctm-tradeguard-swarm.streamlit.app/)**  
+> *Explore the 26-Element Master Accrual Ledger (Table B) & Quarterly Schedules (Table A), run the 3-Agent LangGraph Swarm with interactive Human-in-the-Loop (HITL) approvals, test custom claims in the sandbox, and query ChromaDB contracts live in your browser.*
+
 ---
 
 ## 1. Executive Overview & Business Problem
